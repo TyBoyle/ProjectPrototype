@@ -73,7 +73,7 @@
             <div class="col-md-3 col-lg-2 d-md-block sidebar px-0">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
-                        <h4><i class="fas fa-paw"></i> Lucy's Dog Grooming Service</h4>
+                        <h4><i class="fas fa-paw"></i> Lucy's Dog Grooming & Day Spa</h4>
                     </div>
                     <ul class="nav flex-column px-3">
                         <li class="nav-item">
@@ -208,21 +208,20 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% upcomingAppointments.forEach(function(appointment) { %>
+                                            
                                                 <tr>
-                                                    <td><%= appointment.time %></td>
+                                                    <td></td>
                                                     <td>
-                                                        <img src="<%= appointment.petImage %>" alt="<%= appointment.petName %>" class="pet-avatar me-2">
-                                                        <%= appointment.petName %>
+                                                        
                                                     </td>
-                                                    <td><%= appointment.service %></td>
+                                                    <td>
                                                     <td>
                                                         <span class="badge <%= appointment.status === 'Confirmed' ? 'bg-success' : 'bg-warning text-dark' %>">
                                                             <%= appointment.status %>
                                                         </span>
                                                     </td>
                                                 </tr>
-                                            <% }); %>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -298,14 +297,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% recentClients.forEach(function(client) { %>
+                                            
                                                 <tr>
-                                                    <td><%= client.name %></td>
-                                                    <td><%= client.phone %></td>
-                                                    <td><%= client.petsCount %></td>
-                                                    <td><%= client.lastVisit %></td>
+                                                    
                                                 </tr>
-                                            <% }); %>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
