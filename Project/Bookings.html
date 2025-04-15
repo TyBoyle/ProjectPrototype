@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucy's Dog Grooming</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            min-height: 100vh;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-danger {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        .badge-primary {
+            background-color: var(--primary-color);
+        }
+        .pet-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .booking-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .booking-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+        }
+        #calendar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+        .time-slot {
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .time-slot:hover {
+            transform: scale(1.05);
+        }
+        .time-slot.booked {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        .time-slot.available {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar px-0">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4><i class="fas fa-paw"></i> Lucy's Dog Grooming Service</h4>
+                    </div>
+                    <ul class="nav flex-column px-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="Dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="Bookings.html">
+                                <i class="fas fa-calendar-alt"></i> Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Clients.html">
+                                <i class="fas fa-users"></i> Clients
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Services.html">
+                                <i class="fas fa-concierge-bell"></i> Services
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Reports.html">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Bookings Header -->
+                <div class="dashboard-header mb-4 p-3 rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2><i class="fas fa-calendar-alt me-2"></i> Bookings Management</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newBookingModal">
+                            <i class="fas fa-plus me-1"></i> New Booking
+                        </button>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Bookings</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Bookings Filter -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="dateFilter" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="dateFilter">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Statuses</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="groomerFilter" class="form-label">Groomer</label>
+                                <select class="form-select" id="groomerFilter">
+                                    <option value="">All Groomers</option>
+                                    <option>Sarah Johnson</option>
+                                    <option>Mike Peterson</option>
+                                    <option>Lisa Wong</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                                    <i class="fas fa-undo me-1"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Content -->
+                <div class="row">
+                    <!-- Bookings Calendar -->
+                    <div class="col-lg-5 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">Booking Calendar</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Bookings -->
+                    <div class="col-lg-7 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Today's Bookings</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="viewDropdown" data-bs-toggle="dropdown">
+                                        <i class="fas fa-list me-1"></i> List View
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" data-view="list"><i class="fas fa-list me-2"></i>List View</a></li>
+                                        <li><a class="dropdown-item" href="#" data-view="grid"><i class="fas fa-th-large me-2"></i>Grid View</a></li>
+                                        <li><a class="dropdown-item" href="#" data-view="timeline"><i class="fas fa-stream me-2"></i>Timeline</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="bookingsListView">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>Client/Pet</th>
+                                                    <th>Service</th>
+                                                    <th>Groomer</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bookingsTableBody">
+                                                <!-- Bookings will be inserted here by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="bookingsGridView" class="d-none">
+                                    <div class="row" id="bookingsGrid">
+                                        <!-- Grid view cards will be inserted here by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Bookings -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Upcoming Bookings</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-secondary" id="prevWeekBtn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" id="nextWeekBtn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Client</th>
+                                        <th>Pet</th>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="upcomingBookingsBody">
+                                    <!-- Upcoming bookings will be inserted here by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Booking Modal -->
+    <div class="modal fade" id="newBookingModal" tabindex="-1" aria-labelledby="newBookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newBookingModalLabel">New Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bookingForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="clientSelect" class="form-label">Client</label>
+                                <select class="form-select" id="clientSelect" required>
+                                    <option value="" selected disabled>Select client...</option>
+                                    <option value="1">Emily Johnson (555-0123)</option>
+                                    <option value="2">Michael Brown (555-0456)</option>
+                                    <option value="3">Sarah Wilson (555-0789)</option>
+                                    <option value="4">David Lee (555-0912)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="petSelect" class="form-label">Pet</label>
+                                <select class="form-select" id="petSelect" required>
+                                    <option value="" selected disabled>Select pet...</option>
+                                    <!-- Will be populated when client is selected -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="serviceSelect" class="form-label">Service</label>
+                                <select class="form-select" id="serviceSelect" required>
+                                    <option value="" selected disabled>Select service...</option>
+                                    <option value="1">Basic Grooming ($45)</option>
+                                    <option value="2">Full Grooming ($75)</option>
+                                    <option value="3">Deluxe Spa Package ($120)</option>
+                                    <option value="4">Teeth Cleaning ($35)</option>
+                                    <option value="5">Nail Trim ($15)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="groomerSelect" class="form-label">Groomer</label>
+                                <select class="form-select" id="groomerSelect" required>
+                                    <option value="" selected disabled>Select groomer...</option>
+                                    <option value="1">Sarah Johnson</option>
+                                    <option value="2">Mike Peterson</option>
+                                    <option value="3">Lisa Wong</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="bookingDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="bookingDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bookingTime" class="form-label">Time</label>
+                                <select class="form-select" id="bookingTime" required>
+                                    <option value="" selected disabled>Select time...</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">1:00 PM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bookingNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="bookingNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveBookingBtn">Save Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Booking Modal -->
+    <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBookingForm">
+                        <input type="hidden" id="editBookingId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editClientSelect" class="form-label">Client</label>
+                                <select class="form-select" id="editClientSelect" required>
+                                    <option value="" selected disabled>Select client...</option>
+                                    <option value="1">Emily Johnson (555-0123)</option>
+                                    <option value="2">Michael Brown (555-0456)</option>
+                                    <option value="3">Sarah Wilson (555-0789)</option>
+                                    <option value="4">David Lee (555-0912)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editPetSelect" class="form-label">Pet</label>
+                                <select class="form-select" id="editPetSelect" required>
+                                    <option value="" selected disabled>Select pet...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editServiceSelect" class="form-label">Service</label>
+                                <select class="form-select" id="editServiceSelect" required>
+                                    <option value="" selected disabled>Select service...</option>
+                                    <option value="1">Basic Grooming ($45)</option>
+                                    <option value="2">Full Grooming ($75)</option>
+                                    <option value="3">Deluxe Spa Package ($120)</option>
+                                    <option value="4">Teeth Cleaning ($35)</option>
+                                    <option value="5">Nail Trim ($15)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editGroomerSelect" class="form-label">Groomer</label>
+                                <select class="form-select" id="editGroomerSelect" required>
+                                    <option value="" selected disabled>Select groomer...</option>
+                                    <option value="1">Sarah Johnson</option>
+                                    <option value="2">Mike Peterson</option>
+                                    <option value="3">Lisa Wong</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editBookingDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="editBookingDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editBookingTime" class="form-label">Time</label>
+                                <select class="form-select" id="editBookingTime" required>
+                                    <option value="" selected disabled>Select time...</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">1:00 PM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editBookingStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editBookingStatus" required>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookingNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="editBookingNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger me-auto" id="deleteBookingBtn">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateBookingBtn">Update Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        // Sample data for demonstration
+        const sampleBookings = [
+            {
+                id: 1,
+                clientId: 1,
+                clientName: "Emily Johnson",
+                clientPhone: "555-0123",
+                petId: 1,
+                petName: "Max",
+                petBreed: "Golden Retriever",
+                petImage: "https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=100",
+                serviceId: 2,
+                serviceName: "Full Grooming",
+                servicePrice: 75,
+                groomerId: 1,
+                groomerName: "Sarah Johnson",
+                date: new Date().toISOString().split('T')[0],
+                time: "10:00",
+                status: "confirmed",
+                notes: "Max has sensitive skin, please use hypoallergenic shampoo"
+            },
+            {
+                id: 2,
+                clientId: 2,
+                clientName: "Michael Brown",
+                clientPhone: "555-0456",
+                petId: 3,
+                petName: "Bella",
+                petBreed: "Poodle",
+                petImage: "https://images.unsplash.com/photo-1594149929911-78975a43d4f5?w=100",
+                serviceId: 3,
+                serviceName: "Deluxe Spa Package",
+                servicePrice: 120,
+                groomerId: 3,
+                groomerName: "Lisa Wong",
+                date: new Date().toISOString().split('T')[0],
+                time: "14:00",
+                status: "pending",
+                notes: "Bella needs a haircut - show picture #3 from gallery"
+            },
+            {
+                id: 3,
+                clientId: 3,
+                clientName: "Sarah Wilson",
+                clientPhone: "555-0789",
+                petId: 5,
+                petName: "Charlie",
+                petBreed: "Beagle",
+                petImage: "https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=100",
+                serviceId: 1,
+                serviceName: "Basic Grooming",
+                servicePrice: 45,
+                groomerId: 2,
+                groomerName: "Mike Peterson",
+                date: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+                time: "11:00",
+                status: "confirmed",
+                notes: "Charlie gets nervous, please be patient"
+            }
+        ];
+
+        // Sample pets data (grouped by client)
+        const samplePets = {
+            1: [
+                { id: 1, name: "Max", breed: "Golden Retriever", age: 3 },
+                { id: 2, name: "Buddy", breed: "Labrador", age: 5 }
+            ],
+            2: [
+                { id: 3, name: "Bella", breed: "Poodle", age: 2 },
+                { id: 4, name: "Lucy", breed: "Shih Tzu", age: 4 }
+            ],
+            3: [
+                { id: 5, name: "Charlie", breed: "Beagle", age: 1 }
+            ],
+            4: [
+                { id: 6, name: "Luna", breed: "Siberian Husky", age: 2 },
+                { id: 7, name: "Rocky", breed: "Bulldog", age: 3 }
+            ]
+        };
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize date pickers
+            flatpickr("#bookingDate", {
+                minDate: "today",
+                dateFormat: "Y-m-d"
+            });
+            
+            flatpickr("#editBookingDate", {
+                minDate: "today",
+                dateFormat: "Y-m-d"
+            });
+
+            // Set today's date as default in filter
+            document.getElementById('dateFilter').valueAsDate = new Date();
+
+            // Load sample data
+            renderBookings();
+            renderCalendar();
+            renderUpcomingBookings();
+
+            // Setup event listeners
+            setupEventListeners();
+        });
+
+        function renderBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            const filteredBookings = sampleBookings.filter(booking => 
+                booking.date === today && 
+                (document.getElementById('statusFilter').value === '' || 
+                 booking.status === document.getElementById('statusFilter').value) &&
+                (document.getElementById('groomerFilter').value === '' || 
+                 booking.groomerName === document.getElementById('groomerFilter').value)
+            );
+
+            // List View
+            const tableBody = document.getElementById('bookingsTableBody');
+            tableBody.innerHTML = '';
+            
+            filteredBookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.className = 'booking-row';
+                row.dataset.bookingId = booking.id;
+                row.innerHTML = `
+                    <td>${formatTime(booking.time)}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${booking.petImage}" alt="${booking.petName}" class="pet-avatar me-2">
+                            <div>
+                                <div class="fw-bold">${booking.clientName}</div>
+                                <small class="text-muted">${booking.petName} (${booking.petBreed})</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${booking.serviceName}</td>
+                    <td>${booking.groomerName}</td>
+                    <td><span class="badge ${getStatusBadgeClass(booking.status)} status-badge">${formatStatus(booking.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary edit-booking" data-booking-id="${booking.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Grid View
+            const gridContainer = document.getElementById('bookingsGrid');
+            gridContainer.innerHTML = '';
+            
+            filteredBookings.forEach(booking => {
+                const card = document.createElement('div');
+                card.className = 'col-md-6 col-lg-4 mb-3';
+                card.innerHTML = `
+                    <div class="card booking-card h-100" data-booking-id="${booking.id}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge ${getStatusBadgeClass(booking.status)} status-badge">${formatStatus(booking.status)}</span>
+                                <small class="text-muted">${formatTime(booking.time)}</small>
+                            </div>
+                            <div class="text-center mb-3">
+                                <img src="${booking.petImage}" alt="${booking.petName}" class="pet-avatar mb-2">
+                                <h6 class="mb-0">${booking.petName}</h6>
+                                <small class="text-muted">${booking.petBreed}</small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Owner:</small>
+                                <div>${booking.clientName}</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Service:</small>
+                                <div>${booking.serviceName}</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Groomer:</small>
+                                <div>${booking.groomerName}</div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-sm btn-outline-primary edit-booking" data-booking-id="${booking.id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+        }
+
+        function renderCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: sampleBookings.map(booking => ({
+                    title: `${booking.petName} - ${booking.serviceName}`,
+                    start: `${booking.date}T${booking.time}:00`,
+                    extendedProps: {
+                        bookingId: booking.id
+                    },
+                    backgroundColor: getStatusColor(booking.status),
+                    borderColor: getStatusColor(booking.status)
+                })),
+                eventClick: function(info) {
+                    const bookingId = info.event.extendedProps.bookingId;
+                    const booking = sampleBookings.find(b => b.id === bookingId);
+                    if (booking) {
+                        openEditBookingModal(booking);
+                    }
+                },
+                dateClick: function(info) {
+                    document.getElementById('dateFilter').value = info.dateStr;
+                    renderBookings();
+                }
+            });
+            calendar.render();
+        }
+
+        function renderUpcomingBookings() {
+            const today = new Date();
+            const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            
+            const upcomingBookings = sampleBookings.filter(booking => {
+                const bookingDate = new Date(booking.date);
+                return bookingDate >= today && bookingDate <= nextWeek;
+            });
+
+            const upcomingBody = document.getElementById('upcomingBookingsBody');
+            upcomingBody.innerHTML = '';
+            
+            upcomingBookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.className = 'booking-row';
+                row.dataset.bookingId = booking.id;
+                row.innerHTML = `
+                    <td>${formatDate(booking.date)}</td>
+                    <td>${formatTime(booking.time)}</td>
+                    <td>${booking.clientName}</td>
+                    <td>${booking.petName}</td>
+                    <td>${booking.serviceName}</td>
+                    <td><span class="badge ${getStatusBadgeClass(booking.status)} status-badge">${formatStatus(booking.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary edit-booking" data-booking-id="${booking.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                upcomingBody.appendChild(row);
+            });
+        }
+
+        function setupEventListeners() {
+            // Filter changes
+            document.getElementById('dateFilter').addEventListener('change', renderBookings);
+            document.getElementById('statusFilter').addEventListener('change', renderBookings);
+            document.getElementById('groomerFilter').addEventListener('change', renderBookings);
+            document.getElementById('resetFilters').addEventListener('click', function() {
+                document.getElementById('dateFilter').valueAsDate = new Date();
+                document.getElementById('statusFilter').value = '';
+                document.getElementById('groomerFilter').value = '';
+                renderBookings();
+            });
+
+            // View type toggle
+            document.querySelectorAll('[data-view]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const view = this.getAttribute('data-view');
+                    document.getElementById('bookingsListView').classList.toggle('d-none', view !== 'list');
+                    document.getElementById('bookingsGridView').classList.toggle('d-none', view !== 'grid');
+                    // Note: Timeline view would need additional implementation
+                });
+            });
+
+            // Week navigation for upcoming bookings
+            document.getElementById('prevWeekBtn').addEventListener('click', function() {
+                // In a real app, this would adjust the date range and reload
+                alert('Previous week button clicked - would load earlier bookings in a real implementation');
+            });
+            
+            document.getElementById('nextWeekBtn').addEventListener('click', function() {
+                // In a real app, this would adjust the date range and reload
+                alert('Next week button clicked - would load later bookings in a real implementation');
+            });
+
+            // Client-pet relationship in new booking form
+            document.getElementById('clientSelect').addEventListener('change', function() {
+                const clientId = this.value;
+                const petSelect = document.getElementById('petSelect');
+                
+                petSelect.innerHTML = '<option value="" selected disabled>Select pet...</option>';
+                
+                if (clientId && samplePets[clientId]) {
+                    samplePets[clientId].forEach(pet => {
+                        const option = document.createElement('option');
+                        option.value = pet.id;
+                        option.textContent = `${pet.name} (${pet.breed})`;
+                        petSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Same for edit form
+            document.getElementById('editClientSelect').addEventListener('change', function() {
+                const clientId = this.value;
+                const petSelect = document.getElementById('editPetSelect');
+                
+                petSelect.innerHTML = '<option value="" selected disabled>Select pet...</option>';
+                
+                if (clientId && samplePets[clientId]) {
+                    samplePets[clientId].forEach(pet => {
+                        const option = document.createElement('option');
+                        option.value = pet.id;
+                        option.textContent = `${pet.name} (${pet.breed})`;
+                        petSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Save new booking
+            document.getElementById('saveBookingBtn').addEventListener('click', function() {
+                const form = document.getElementById('bookingForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                // Create new booking (in a real app, this would be an API call)
+                const newId = sampleBookings.length > 0 ? Math.max(...sampleBookings.map(b => b.id)) + 1 : 1;
+                const newBooking = {
+                    id: newId,
+                    clientId: parseInt(document.getElementById('clientSelect').value),
+                    clientName: document.getElementById('clientSelect').options[document.getElementById('clientSelect').selectedIndex].text.split(' (')[0],
+                    clientPhone: document.getElementById('clientSelect').options[document.getElementById('clientSelect').selectedIndex].text.match(/\(([^)]+)\)/)[1],
+                    petId: parseInt(document.getElementById('petSelect').value),
+                    petName: document.getElementById('petSelect').options[document.getElementById('petSelect').selectedIndex].text.split(' (')[0],
+                    petBreed: document.getElementById('petSelect').options[document.getElementById('petSelect').selectedIndex].text.match(/\(([^)]+)\)/)[1],
+                    petImage: "https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=100", // Default image
+                    serviceId: parseInt(document.getElementById('serviceSelect').value),
+                    serviceName: document.getElementById('serviceSelect').options[document.getElementById('serviceSelect').selectedIndex].text.split(' (')[0],
+                    servicePrice: parseFloat(document.getElementById('serviceSelect').options[document.getElementById('serviceSelect').selectedIndex].text.match(/\$([\d.]+)/)[1]),
+                    groomerId: parseInt(document.getElementById('groomerSelect').value),
+                    groomerName: document.getElementById('groomerSelect').options[document.getElementById('groomerSelect').selectedIndex].text,
+                    date: document.getElementById('bookingDate').value,
+                    time: document.getElementById('bookingTime').value,
+                    status: "pending",
+                    notes: document.getElementById('bookingNotes').value
+                };
+
+                sampleBookings.push(newBooking);
+                
+                // Close modal and refresh
+                bootstrap.Modal.getInstance(document.getElementById('newBookingModal')).hide();
+                renderBookings();
+                renderCalendar();
+                renderUpcomingBookings();
+                
+                // Reset form
+                form.reset();
+            });
+
+            // Edit booking buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-booking')) {
+                    const bookingId = parseInt(e.target.closest('.edit-booking').getAttribute('data-booking-id'));
+                    const booking = sampleBookings.find(b => b.id === bookingId);
+                    if (booking) {
+                        openEditBookingModal(booking);
+                    }
+                }
+            });
+
+            // Update booking
+            document.getElementById('updateBookingBtn').addEventListener('click', function() {
+                const form = document.getElementById('editBookingForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const bookingId = parseInt(document.getElementById('editBookingId').value);
+                const bookingIndex = sampleBookings.findIndex(b => b.id === bookingId);
+                
+                if (bookingIndex !== -1) {
+                    sampleBookings[bookingIndex] = {
+                        ...sampleBookings[bookingIndex],
+                        clientId: parseInt(document.getElementById('editClientSelect').value),
+                        clientName: document.getElementById('editClientSelect').options[document.getElementById('editClientSelect').selectedIndex].text.split(' (')[0],
+                        clientPhone: document.getElementById('editClientSelect').options[document.getElementById('editClientSelect').selectedIndex].text.match(/\(([^)]+)\)/)[1],
+                        petId: parseInt(document.getElementById('editPetSelect').value),
+                        petName: document.getElementById('editPetSelect').options[document.getElementById('editPetSelect').selectedIndex].text.split(' (')[0],
+                        petBreed: document.getElementById('editPetSelect').options[document.getElementById('editPetSelect').selectedIndex].text.match(/\(([^)]+)\)/)[1],
+                        serviceId: parseInt(document.getElementById('editServiceSelect').value),
+                        serviceName: document.getElementById('editServiceSelect').options[document.getElementById('editServiceSelect').selectedIndex].text.split(' (')[0],
+                        servicePrice: parseFloat(document.getElementById('editServiceSelect').options[document.getElementById('editServiceSelect').selectedIndex].text.match(/\$([\d.]+)/)[1]),
+                        groomerId: parseInt(document.getElementById('editGroomerSelect').value),
+                        groomerName: document.getElementById('editGroomerSelect').options[document.getElementById('editGroomerSelect').selectedIndex].text,
+                        date: document.getElementById('editBookingDate').value,
+                        time: document.getElementById('editBookingTime').value,
+                        status: document.getElementById('editBookingStatus').value,
+                        notes: document.getElementById('editBookingNotes').value
+                    };
+
+                    // Close modal and refresh
+                    bootstrap.Modal.getInstance(document.getElementById('editBookingModal')).hide();
+                    renderBookings();
+                    renderCalendar();
+                    renderUpcomingBookings();
+                }
+            });
+
+            // Delete booking
+            document.getElementById('deleteBookingBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this booking?')) {
+                    const bookingId = parseInt(document.getElementById('editBookingId').value);
+                    const bookingIndex = sampleBookings.findIndex(b => b.id === bookingId);
+                    
+                    if (bookingIndex !== -1) {
+                        sampleBookings.splice(bookingIndex, 1);
+                        
+                        // Close modal and refresh
+                        bootstrap.Modal.getInstance(document.getElementById('editBookingModal')).hide();
+                        renderBookings();
+                        renderCalendar();
+                        renderUpcomingBookings();
+                    }
+                }
+            });
+        }
+
+        function openEditBookingModal(booking) {
+            document.getElementById('editBookingId').value = booking.id;
+            document.getElementById('editClientSelect').value = booking.clientId;
+            
+            // Trigger pet select update
+            document.getElementById('editClientSelect').dispatchEvent(new Event('change'));
+            
+            // Need to set timeout to allow pets to load
+            setTimeout(() => {
+                document.getElementById('editPetSelect').value = booking.petId;
+                document.getElementById('editServiceSelect').value = booking.serviceId;
+                document.getElementById('editGroomerSelect').value = booking.groomerId;
+                document.getElementById('editBookingDate').value = booking.date;
+                document.getElementById('editBookingTime').value = booking.time;
+                document.getElementById('editBookingStatus').value = booking.status;
+                document.getElementById('editBookingNotes').value = booking.notes || '';
+                
+                const modal = new bootstrap.Modal(document.getElementById('editBookingModal'));
+                modal.show();
+            }, 100);
+        }
+
+        // Helper functions
+        function formatTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':');
+            const hour = parseInt(hours);
+            return hour > 12 ? `${hour - 12}:${minutes} PM` : `${hour}:${minutes} AM`;
+        }
+
+        function formatDate(dateStr) {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString(undefined, options);
+        }
+
+        function formatStatus(status) {
+            return status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'confirmed': return 'bg-success';
+                case 'pending': return 'bg-warning text-dark';
+                case 'completed': return 'bg-info';
+                case 'cancelled': return 'bg-secondary';
+                default: return 'bg-primary';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'confirmed': return '#28a745';
+                case 'pending': return '#ffc107';
+                case 'completed': return '#17a2b8';
+                case 'cancelled': return '#6c757d';
+                default: return '#6f42c1';
+            }
+        }
+    </script>
+</body>
+</html>

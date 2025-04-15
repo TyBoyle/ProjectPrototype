@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | Lucy's Dog Grooming Service</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            min-height: 100vh;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .service-card {
+            transition: all 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        .duration-badge {
+            font-size: 0.8rem;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .price-tag {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .category-badge {
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+        .action-btns .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar px-0">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4><i class="fas fa-paw"></i> Lucy's Dog Grooming Service</h4>
+                    </div>
+                    <ul class="nav flex-column px-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bookings.html">
+                                <i class="fas fa-calendar-alt"></i> Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clients.html">
+                                <i class="fas fa-users"></i> Clients
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="Services.html">
+                                <i class="fas fa-concierge-bell"></i> Services
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Reports.html">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Services Header -->
+                <div class="dashboard-header mb-4 p-3 rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2><i class="fas fa-concierge-bell me-2"></i> Services Management</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newServiceModal">
+                            <i class="fas fa-plus me-1"></i> New Service
+                        </button>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+                            <li class="breadcrumb-item active">Services</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Services Filter -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="searchService" class="form-label">Search Services</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchService" placeholder="Service name or description">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchServiceBtn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="filterCategory" class="form-label">Category</label>
+                                <select class="form-select" id="filterCategory">
+                                    <option value="">All Categories</option>
+                                    <option>Basic Grooming</option>
+                                    <option>Full Service</option>
+                                    <option>Spa Treatments</option>
+                                    <option>Specialty Services</option>
+                                    <option>Add-ons</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Content -->
+                <div class="row mb-4">
+                    <!-- Service Cards -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card service-card h-100">
+                            <div class="card-body text-center">
+                                <div class="service-icon">
+                                    <i class="fas fa-bath"></i>
+                                </div>
+                                <h4 class="card-title">Basic Grooming</h4>
+                                <div class="mb-3">
+                                    <span class="badge bg-primary category-badge">Essential</span>
+                                    <span class="badge duration-badge"><i class="fas fa-clock me-1"></i> 45-60 mins</span>
+                                </div>
+                                <p class="card-text">Includes bath, brush, nail trim, ear cleaning, and light trimming.</p>
+                                <div class="price-tag mb-3">$45</div>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-sm btn-outline-secondary me-2 edit-service" 
+                                            data-service-id="1">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" disabled>
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card service-card h-100">
+                            <div class="card-body text-center">
+                                <div class="service-icon">
+                                    <i class="fas fa-spa"></i>
+                                </div>
+                                <h4 class="card-title">Full Grooming</h4>
+                                <div class="mb-3">
+                                    <span class="badge bg-success category-badge">Premium</span>
+                                    <span class="badge duration-badge"><i class="fas fa-clock me-1"></i> 1.5-2 hrs</span>
+                                </div>
+                                <p class="card-text">Complete grooming package with haircut, styling, and spa treatment.</p>
+                                <div class="price-tag mb-3">$75</div>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-sm btn-outline-secondary me-2 edit-service" 
+                                            data-service-id="2">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" disabled>
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card service-card h-100">
+                            <div class="card-body text-center">
+                                <div class="service-icon">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <h4 class="card-title">Deluxe Spa Package</h4>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning text-dark category-badge">Luxury</span>
+                                    <span class="badge duration-badge"><i class="fas fa-clock me-1"></i> 2-2.5 hrs</span>
+                                </div>
+                                <p class="card-text">Premium treatment with blueberry facial, paw massage, and aromatherapy.</p>
+                                <div class="price-tag mb-3">$120</div>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-sm btn-outline-secondary me-2 edit-service" 
+                                            data-service-id="3">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" disabled>
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More service cards would go here -->
+                </div>
+
+                <!-- Services Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">All Services</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary me-2" id="exportServicesBtn">
+                                <i class="fas fa-file-export me-1"></i> Export
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newServiceModal">
+                                <i class="fas fa-plus me-1"></i> Add Service
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Category</th>
+                                        <th>Duration</th>
+                                        <th>Price</th>
+                                        <th>Popularity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-bath me-2 text-primary"></i>
+                                                <span>Basic Grooming</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-primary">Essential</span></td>
+                                        <td>45-60 mins</td>
+                                        <td>$45</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%">85%</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-secondary me-1 edit-service" 
+                                                    data-service-id="1">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" disabled>
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- More service rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Service Modal -->
+    <div class="modal fade" id="newServiceModal" tabindex="-1" aria-labelledby="newServiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newServiceModalLabel">New Service</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="serviceForm">
+                        <div class="mb-3">
+                            <label for="serviceName" class="form-label">Service Name</label>
+                            <input type="text" class="form-control" id="serviceName" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="serviceCategory" class="form-label">Category</label>
+                                <select class="form-select" id="serviceCategory" required>
+                                    <option value="">Select category...</option>
+                                    <option>Basic Grooming</option>
+                                    <option>Full Service</option>
+                                    <option>Spa Treatments</option>
+                                    <option>Specialty Services</option>
+                                    <option>Add-ons</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="serviceDuration" class="form-label">Duration (minutes)</label>
+                                <input type="number" class="form-control" id="serviceDuration" min="15" step="15" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="servicePrice" class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="servicePrice" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="serviceIcon" class="form-label">Icon</label>
+                                <select class="form-select" id="serviceIcon">
+                                    <option value="fa-bath">Bath</option>
+                                    <option value="fa-spa">Spa</option>
+                                    <option value="fa-cut">Scissors</option>
+                                    <option value="fa-paw">Paw</option>
+                                    <option value="fa-teeth">Teeth</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="serviceDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="serviceDescription" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveServiceBtn">Save Service</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize service search
+            document.getElementById('searchServiceBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchService').value.toLowerCase();
+                document.querySelectorAll('.service-card').forEach(card => {
+                    const serviceText = card.textContent.toLowerCase();
+                    card.style.display = serviceText.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Filter services by category
+            document.getElementById('filterCategory').addEventListener('change', function() {
+                const category = this.value.toLowerCase();
+                alert('Filtering by category: ' + category + '\nIn a real implementation, this would filter the services');
+            });
+
+            // Save new service
+            document.getElementById('saveServiceBtn').addEventListener('click', function() {
+                const form = document.getElementById('serviceForm');
+                if (form.checkValidity()) {
+                    alert('Service saved successfully!\nIn a real implementation, this would save to your database');
+                    bootstrap.Modal.getInstance(document.getElementById('newServiceModal')).hide();
+                    form.reset();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Edit service buttons
+            document.querySelectorAll('.edit-service').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-service-id');
+                    alert('Would edit service ID: ' + serviceId + '\nIn a real implementation, this would open an edit modal with service data');
+                });
+            });
+
+            // Export services
+            document.getElementById('exportServicesBtn').addEventListener('click', function() {
+                alert('Would export services to CSV\nIn a real implementation, this would generate a downloadable file');
+            });
+        });
+    </script>
+</body>
+</html>

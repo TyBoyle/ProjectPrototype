@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients | Lucy's Grooming Service</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            min-height: 100vh;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .pet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .pet-badge {
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+        .action-btns .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        .client-card {
+            transition: all 0.3s;
+        }
+        .client-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .last-visit {
+            font-size: 0.85rem;
+        }
+        .time-slot {
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar px-0">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4><i class="fas fa-paw"></i> Lucy's Dog Grooming Service</h4>
+                    </div>
+                    <ul class="nav flex-column px-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bookings.html">
+                                <i class="fas fa-calendar-alt"></i> Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="clients.html">
+                                <i class="fas fa-users"></i> Clients
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Services.html">
+                                <i class="fas fa-concierge-bell"></i> Services
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Reports.html">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Clients Header -->
+                <div class="dashboard-header mb-4 p-3 rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2><i class="fas fa-users me-2"></i> Clients Management</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newClientModal">
+                            <i class="fas fa-plus me-1"></i> New Client
+                        </button>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+                            <li class="breadcrumb-item active">Clients</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Clients Filter -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="searchClient" class="form-label">Search Clients</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchClient" placeholder="Name, phone, or email">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchClientBtn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="filterPetType" class="form-label">Pet Type</label>
+                                <select class="form-select" id="filterPetType">
+                                    <option value="">All Pets</option>
+                                    <option>Dog</option>
+                                    <option>Cat</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="filterActivity" class="form-label">Activity</label>
+                                <select class="form-select" id="filterActivity">
+                                    <option value="">All Clients</option>
+                                    <option value="active">Active (last 3 months)</option>
+                                    <option value="inactive">Inactive (6+ months)</option>
+                                    <option value="new">New (last 30 days)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients Content -->
+                <div class="row mb-4">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card client-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start mb-3">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" 
+                                         alt="Emily Johnson" class="client-avatar me-3">
+                                    <div>
+                                        <h5 class="mb-1">Emily Johnson</h5>
+                                        <div class="text-muted mb-2">
+                                            <i class="fas fa-phone me-1"></i> (555) 123-4567<br>
+                                            <i class="fas fa-envelope me-1"></i> emily@example.com
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="badge bg-primary pet-badge">2 Pets</span>
+                                            <span class="badge bg-success pet-badge">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="last-visit text-muted">
+                                        <i class="fas fa-calendar-day me-1"></i> Last visit: 2 weeks ago
+                                    </div>
+                                    <div class="action-btns">
+                                        <a href="bookings.html?client=1" class="btn btn-sm btn-outline-primary me-1" 
+                                           title="View Bookings">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-secondary me-1 edit-client" 
+                                                data-client-id="1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                title="Delete" disabled>
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card client-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start mb-3">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+                                         alt="Michael Brown" class="client-avatar me-3">
+                                    <div>
+                                        <h5 class="mb-1">Michael Brown</h5>
+                                        <div class="text-muted mb-2">
+                                            <i class="fas fa-phone me-1"></i> (555) 987-6543<br>
+                                            <i class="fas fa-envelope me-1"></i> michael@example.com
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="badge bg-primary pet-badge">1 Pet</span>
+                                            <span class="badge bg-warning text-dark pet-badge">New</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="last-visit text-muted">
+                                        <i class="fas fa-calendar-day me-1"></i> First-time client
+                                    </div>
+                                    <div class="action-btns">
+                                        <a href="bookings.html?client=2" class="btn btn-sm btn-outline-primary me-1">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-secondary me-1 edit-client" 
+                                                data-client-id="2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" disabled>
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More client cards would go here -->
+                </div>
+
+                <!-- Client Pets Table -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">All Pets</h5>
+                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newPetModal">
+                            <i class="fas fa-plus me-1"></i> Add Pet
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Pet</th>
+                                        <th>Owner</th>
+                                        <th>Breed</th>
+                                        <th>Age</th>
+                                        <th>Special Notes</th>
+                                        <th>Last Groomed</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=100" 
+                                                     alt="Max" class="pet-avatar me-2">
+                                                <span>Max</span>
+                                            </div>
+                                        </td>
+                                        <td>Emily Johnson</td>
+                                        <td>Golden Retriever</td>
+                                        <td>3 years</td>
+                                        <td>Sensitive skin</td>
+                                        <td>2 weeks ago</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="fas fa-paw"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- More pet rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Client Modal -->
+    <div class="modal fade" id="newClientModal" tabindex="-1" aria-labelledby="newClientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newClientModalLabel">New Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="clientForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="clientFirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="clientFirstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="clientLastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="clientLastName" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="clientPhone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="clientPhone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="clientEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="clientEmail">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="clientAddress" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="clientNotes" rows="3" 
+                                      placeholder="Allergies, preferences, etc."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveClientBtn">Save Client</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Pet Modal -->
+    <div class="modal fade" id="newPetModal" tabindex="-1" aria-labelledby="newPetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newPetModalLabel">Add New Pet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="petForm">
+                        <div class="mb-3">
+                            <label for="petClientSelect" class="form-label">Client</label>
+                            <select class="form-select" id="petClientSelect" required>
+                                <option value="" selected disabled>Select client...</option>
+                                <option value="1">Emily Johnson</option>
+                                <option value="2">Michael Brown</option>
+                                <!-- More clients -->
+                            </select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="petName" class="form-label">Pet Name</label>
+                                <input type="text" class="form-control" id="petName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="petType" class="form-label">Type</label>
+                                <select class="form-select" id="petType" required>
+                                    <option value="dog">Dog</option>
+                                    <option value="cat">Cat</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="petBreed" class="form-label">Breed</label>
+                                <input type="text" class="form-control" id="petBreed">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="petAge" class="form-label">Age</label>
+                                <input type="number" class="form-control" id="petAge" min="0">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="petNotes" class="form-label">Special Notes</label>
+                            <textarea class="form-control" id="petNotes" rows="3" 
+                                      placeholder="Medical conditions, behavior notes, etc."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePetBtn">Save Pet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize client search
+            document.getElementById('searchClientBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchClient').value.toLowerCase();
+                document.querySelectorAll('.client-card').forEach(card => {
+                    const clientText = card.textContent.toLowerCase();
+                    card.style.display = clientText.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Filter clients by pet type
+            document.getElementById('filterPetType').addEventListener('change', function() {
+                const petType = this.value.toLowerCase();
+                alert('Filtering by pet type: ' + petType + '\nIn a real implementation, this would filter the client cards');
+            });
+
+            // Save new client
+            document.getElementById('saveClientBtn').addEventListener('click', function() {
+                const form = document.getElementById('clientForm');
+                if (form.checkValidity()) {
+                    alert('Client saved successfully!\nIn a real implementation, this would save to your database');
+                    bootstrap.Modal.getInstance(document.getElementById('newClientModal')).hide();
+                    form.reset();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Save new pet
+            document.getElementById('savePetBtn').addEventListener('click', function() {
+                const form = document.getElementById('petForm');
+                if (form.checkValidity()) {
+                    alert('Pet saved successfully!\nIn a real implementation, this would save to your database');
+                    bootstrap.Modal.getInstance(document.getElementById('newPetModal')).hide();
+                    form.reset();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Edit client buttons
+            document.querySelectorAll('.edit-client').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const clientId = this.getAttribute('data-client-id');
+                    alert('Would edit client ID: ' + clientId + '\nIn a real implementation, this would open an edit modal with client data');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
